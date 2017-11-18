@@ -14,12 +14,9 @@ class SimulatorTest extends FunSpec with Matchers {
       val script = Source.fromInputStream(this.getClass.getResourceAsStream(s"$root/script")).getLines.toList
       val expected = Source.fromInputStream(this.getClass.getResourceAsStream(s"$root/output")).getLines.toList
 
-      val sw = new StringWriter
-      val pw = new PrintWriter(sw)
-      Simulator.run(field, script, pw)
-      pw.close()
+      val (_, result) = Simulator.run(field, script)
 
-      val actual = Source.fromString(sw.toString).getLines.toList
+      val actual = Source.fromString(Simulator.transcript(result)).getLines.toList
 
       actual.zip(expected).zipWithIndex foreach { case ((a, e), n) =>
           s"$n: $a" shouldBe s"$n: $e"
